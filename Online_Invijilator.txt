@@ -1,0 +1,20 @@
+Project Manual
+
+Data Pipeline
+
+	Source --> Analysis --> Events --> Evidence --> Review
+
+`sources.py` --> Reads webcam or RTSP in a background thread, so a slow AI model doesn’t lag the stream, and reconnects on failure
+`cctv_demo.py` --> YOLO plus Byte Track on a CCTV stream, drawing person, phone and book boxes with track IDs
+`ffmpeg_recorder.py` --> Records the CCTV stream and USB mic with FFmpeg as a separate process, independent of the AI
+`events_db.py`--> Stores sessions, sources and events using the plan’s table design
+`clip_buffer.py` --> Saves a clip with 5 s before and 10 s after each alert
+`review_app.py` --> Streamlit page where the reviewer sees the clip and snapshot and records a decision
+`main.py` -- > The Overall configuration of all the above logic to perform
+
+Perform One By One in the terminal
+python -m pip install -r requirements.txt
+
+python main.py                    # 1. webcam pipeline with DB and clips
+streamlit run review_app.py       # 2. review the flagged events (separate terminal)
+python cctv_demo.py               # 3. CCTV detection and tracking
